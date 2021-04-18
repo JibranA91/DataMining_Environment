@@ -6,6 +6,14 @@ def naive_bayes(x_train, x_test, y_train, y_test, label_encoder):
     from sklearn.naive_bayes import GaussianNB
     from sklearn import metrics
 
+    import seaborn as sb
+    from io import BytesIO
+    import base64
+    import matplotlib.pyplot as plt
+
+    img = BytesIO()
+    sb.set_style("dark")
+
     # Create a Gaussian Classifier
     gnb = GaussianNB()
 
@@ -22,6 +30,10 @@ def naive_bayes(x_train, x_test, y_train, y_test, label_encoder):
     # Accuracy stats
     accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
                                                    label_encoder.inverse_transform(y_pred))
+    accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
+                                                   label_encoder.inverse_transform(y_pred),
+                                                   output_dict=True)
+    accuracy_stats = pd.DataFrame(accuracy_stats).transpose()
 
     # Confusion Matrix
     actual_values = list(label_encoder.inverse_transform(y_test))
@@ -37,4 +49,10 @@ def naive_bayes(x_train, x_test, y_train, y_test, label_encoder):
                                    rownames=['Actual'],
                                    colnames=['Predicted'])
 
-    return [accuracy_stats, confusion_matrix, [train_time, predict_time]]
+    sb.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')
+    plt.savefig(img, format='png', bbox_inches='tight')
+    plt.close()
+    img.seek(0)
+    cm_plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]

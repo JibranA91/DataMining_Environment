@@ -1,5 +1,4 @@
 # Decision Tree
-from data_prep import data_prep
 
 
 def decision_tree(x_train, x_test, y_train, y_test, label_encoder):
@@ -7,6 +6,14 @@ def decision_tree(x_train, x_test, y_train, y_test, label_encoder):
     import pandas as pd
     from sklearn.tree import DecisionTreeClassifier     # Import Decision Tree Classifier
     from sklearn import metrics                         # Import scikit-learn metrics module for accuracy calculation
+
+    import seaborn as sb
+    from io import BytesIO
+    import base64
+    import matplotlib.pyplot as plt
+
+    img = BytesIO()
+    sb.set_style("dark")
 
     clf = DecisionTreeClassifier()
 
@@ -23,6 +30,10 @@ def decision_tree(x_train, x_test, y_train, y_test, label_encoder):
     # Accuracy stats
     accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
                                                    label_encoder.inverse_transform(y_pred))
+    accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
+                                                   label_encoder.inverse_transform(y_pred),
+                                                   output_dict=True)
+    accuracy_stats = pd.DataFrame(accuracy_stats).transpose()
 
     # Confusion Matrix
     actual_values = list(label_encoder.inverse_transform(y_test))
@@ -33,4 +44,10 @@ def decision_tree(x_train, x_test, y_train, y_test, label_encoder):
     df = pd.DataFrame(data, columns=['y_Actual', 'y_Predicted'])
     confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'])
 
-    return [accuracy_stats, confusion_matrix, [train_time, predict_time]]
+    sb.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')
+    plt.savefig(img, format='png', bbox_inches='tight')
+    plt.close()
+    img.seek(0)
+    cm_plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]

@@ -3,26 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slider.css') }}">
     <title>Title</title>
 </head>
 <body>
 
-    <div class="data_summary" style="float:left; padding: 50px;">
-        <h1>Data Summary</h1>
-        <p>Below are some summary stats from the features you selected from your data</p><br /><br /><br />
-
-        <h3>Confusion Matrix</h3>
-        <div class=square">
-            <img src="data:image/png;base64, {{ c_matrix }}">
-        </div>
-    </div>
-
-    <div class="datamine_input" style="float:right; padding: 50px;">
+    <div class="datamine_input" style="float:left; padding: 50px;">
         <h1>Data Classification</h1>
+        <h2>Single Classification Algorithm</h2>
         <p>Below you can select which classification algorithm you want to apply<br \>
         Random Forest and Neural Network take some time to run<br \>
-        so please be patient.</p><br /><br /><br />
+        so please be patient.</p>
         <form  action="/feature_select/datamine/classify" name="datamine_algo" method="POST">
             <p>
                 <label for="datamine_algo">Classification Algorithm:</label>
@@ -86,6 +76,24 @@
         </form>
         <p><a href="/feature_select/datamine/compare_models">Compare Models Instead</a></p>
     </div>
+
+    <div class="datamine_output" style="float:right; padding: 50px;">
+        <h1>{{ algorithm }} Output</h1><br /><br />
+        <p> Training Time: {{ train_time }} seconds <br />
+        Prediction Time: {{ predict_time }} seconds </p>
+        <h3>Accuracy Stats</h3>
+        <p>{{ accuracy_stats|safe }}</p>
+        <h3>Confusion Matrix</h3>
+        <div class=square">
+            <img src="data:image/png;base64, {{ confusion_matrix }}">
+        </div>
+
+
+
+    </div>
+
+
+
 
 </body>
 </html>

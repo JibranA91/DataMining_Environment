@@ -9,6 +9,14 @@ def neural_network(x_train, x_test, y_train, y_test, label_encoder):
     from sklearn.preprocessing import StandardScaler
     from sklearn.datasets import make_classification
 
+    import seaborn as sb
+    from io import BytesIO
+    import base64
+    import matplotlib.pyplot as plt
+
+    img = BytesIO()
+    sb.set_style("dark")
+
     clf = MLPClassifier(hidden_layer_sizes=(5,), max_iter=500, warm_start=True)
 
     # Train Neural Network Classifier
@@ -25,6 +33,10 @@ def neural_network(x_train, x_test, y_train, y_test, label_encoder):
     # Accuracy stats
     accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
                                                    label_encoder.inverse_transform(y_pred))
+    accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
+                                                   label_encoder.inverse_transform(y_pred),
+                                                   output_dict=True)
+    accuracy_stats = pd.DataFrame(accuracy_stats).transpose()
 
     # Confusion Matrix
     actual_values = list(label_encoder.inverse_transform(y_test))
@@ -35,5 +47,11 @@ def neural_network(x_train, x_test, y_train, y_test, label_encoder):
     df = pd.DataFrame(data, columns=['y_Actual', 'y_Predicted'])
     confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'])
 
-    return [accuracy_stats, confusion_matrix, [train_time, predict_time]]
+    sb.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')
+    plt.savefig(img, format='png', bbox_inches='tight')
+    plt.close()
+    img.seek(0)
+    cm_plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]
 

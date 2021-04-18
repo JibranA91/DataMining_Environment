@@ -6,7 +6,14 @@ def k_nn(x_train, x_test, y_train, y_test, label_encoder):
     import pandas as pd
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn import metrics
-    import seaborn as sn
+
+    import seaborn as sb
+    from io import BytesIO
+    import base64
+    import matplotlib.pyplot as plt
+
+    img = BytesIO()
+    sb.set_style("dark")
 
     knn = KNeighborsClassifier(n_neighbors=10)
 
@@ -37,11 +44,20 @@ def k_nn(x_train, x_test, y_train, y_test, label_encoder):
     confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'],
                                    rownames=['Actual'], colnames=['Predicted'])
 
-    sn.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')
+    sb.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')
+    plt.savefig(img, format='png', bbox_inches='tight')
+    plt.close()
+    img.seek(0)
+    cm_plot_url = base64.b64encode(img.getvalue()).decode('utf8')
 
     # Accuracy Chart
     accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
                                                    label_encoder.inverse_transform(y_pred))
+    accuracy_stats = metrics.classification_report(label_encoder.inverse_transform(y_test),
+                                                   label_encoder.inverse_transform(y_pred),
+                                                   output_dict=True)
+    accuracy_stats = pd.DataFrame(accuracy_stats).transpose()
+
     accuracy_val = []  # to store rmse values for different k
     for K in range(10):
         K = K+1
@@ -56,5 +72,5 @@ def k_nn(x_train, x_test, y_train, y_test, label_encoder):
     curve = pd.DataFrame(accuracy_val)  # elbow curve
     curve.plot()
 
-    return [accuracy_stats, confusion_matrix, [train_time, predict_time]]
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]
 
