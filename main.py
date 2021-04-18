@@ -1,6 +1,7 @@
 import seaborn as sn
 from data_prep import data_prep
-import sys
+from flask import Flask, render_template, request
+import sys, io, csv
 from model_compare import all_feature_models_validation
 
 sys.path.insert(0, 'classifiers')
@@ -9,6 +10,9 @@ from random_forest import random_forest
 from naive_bayes import naive_bayes
 from neural_network import neural_network
 
+mydata = None
+app = Flask(__name__)
+
 
 def pull_data(csv_path):
     import pandas as pd
@@ -16,7 +20,37 @@ def pull_data(csv_path):
     return song_attributes
 
 
+@app.route('/')
+def index():
+    return render_template("homepage.html")
+
+
+@app.route('/feature_select', methods=['POST'])
+def feature_select():
+    global mydata
+    uploaded_file = request.files['myfile']
+    if uploaded_file.filename != '':
+        uploaded_file.save(uploaded_file.filename)
+    mydata = pull_data(uploaded_file.filename)
+    column_names = list(mydata.columns)
+    return render_template("feature_select.html", column_names=column_names)
+
+
+@app.route('/feature_select/datamine', methods=['POST'])
+def datamine():
+    feature_list = request.form.getlist('column_name')
+    active_data = mydata[feature_list]
+    return render_template("datamine.html", active_features=feature_list)
+
+
+
+
+
 if __name__ == '__main__':
+    app.run(debug=True)
+
+    """
+    
     print('pulling data from file...')
     song_attributes = pull_data('data/msd_combined.csv')
 
@@ -28,7 +62,7 @@ if __name__ == '__main__':
 
     compare_df = all_feature_models_validation(song_attributes, all_features_list)
 
-    """
+    
     features = ['mood_party', 'genre_dortmund',
                 'genre_electronic', 'mood_acoustic', 'mood_aggressive', 'mood_electronic',
                 'mood_happy', 'mood_relaxed', 'mood_sad', 'moods_mirex',

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Features</title>
+</head>
+<body>
+<h1> Data Features</h1>
+
+<p> Select all the features you want to include:</p>
+<p> <i> Do remember <b>not</b> to include any primary_key attributes </i></p>
+
+<table>
+
+    <form action="/feature_select/datamine" name="feature_list" method="POST">
+      <table class="table is-striped is-fullwidth">
+        {% for column_name in column_names %}
+          {% if column_name != 'track_id' %}
+            <tr>
+              <td>
+                <label class="checkbox">
+                  <input type="checkbox" name="column_name" value="{{ column_name }}"/> {{ column_name }}
+                </label>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <p><input type="submit"></p>
+        </div>
+      </div>
+    </form>
+
+</table>
+
+</body>
+</html>
