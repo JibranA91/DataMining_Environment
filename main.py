@@ -106,10 +106,12 @@ def classify():
                              ((',' + tune_hyperparameters) if algorithm == 'random_forest' else '') + ")")
 
     accuracy_stats = classifier_output[0].round(3).to_html()
-    print(accuracy_stats)
     confusion_matrix = classifier_output[1]  # confusion matrix
     train_time = str(round((classifier_output[2][0]), 3))
     predict_time = str(round((classifier_output[2][1]), 3))
+    best_parameters = str(classifier_output[3])
+    best_parameters = best_parameters.replace(",", ",<br />", 15)
+    print(best_parameters)
 
     algorithm = algorithm. \
         replace('decision_tree', 'Decision Tree'). \
@@ -123,7 +125,8 @@ def classify():
                            active_features=feature_list, algorithm=algorithm,
                            target_variable=target_variable, features=features,
                            accuracy_stats=accuracy_stats, confusion_matrix=confusion_matrix,
-                           train_time=train_time, predict_time=predict_time)
+                           train_time=train_time, predict_time=predict_time,
+                           best_parameters=best_parameters)
 
 
 @app.route('/feature_select/datamine/compare_models', methods=['GET', 'POST'])

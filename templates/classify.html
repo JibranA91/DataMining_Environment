@@ -60,12 +60,11 @@
                     <option value="support_vm">Support Vector Machine</option>
                 </select>
             </p>
-            <div class="field">
-                <p><label class="checkbox" id="tune_hyperparameters" style="display: none;">
+            <div class="field"  id="tune_hyperparameters" style="display: none;">
+                <p><label class="checkbox">
                     <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
-                    <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
                 </label></p>
-
+                <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
             </div><br />
 
 
@@ -126,6 +125,10 @@
         <h1>{{ algorithm }} Output</h1><br /><br />
         <p> Training Time: {{ train_time }} seconds <br />
         Prediction Time: {{ predict_time }} seconds </p>
+        {% if best_parameters != "None" %}
+            <h3>Best Parameters from Hypertuning</h3>
+            <p> {{ best_parameters|safe }} </p>
+        {% endif %}
         <h3>Accuracy Stats</h3>
         <p>{{ accuracy_stats|safe }}</p>
         <h3>Confusion Matrix</h3>

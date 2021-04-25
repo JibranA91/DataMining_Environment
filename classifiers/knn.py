@@ -71,6 +71,7 @@ def k_nn(x_train, x_test, y_train, y_test, label_encoder):
 
     curve = pd.DataFrame(accuracy_val)  # elbow curve
     curve.plot()
+    best_parameters = "None"
 
-    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time], best_parameters]
 
