@@ -1,15 +1,18 @@
 from flask import Flask, render_template, request
 import matplotlib.pyplot as plt
-import sys
 from support_functions.correl_matrix import correl_matrix
 from support_functions.pull_data import pull_data
 from support_functions.data_prep import data_prep
 from support_functions.model_compare import all_feature_models_validation
 from support_functions.sortedgroupbar import sortedgroupedbar
 from support_functions.data_summary import data_summary
+from classifiers.random_forest import random_forest
+from classifiers.support_vector_machine import  support_vm
+from classifiers.naive_bayes import naive_bayes
+from classifiers.neural_network import neural_network
+from classifiers.decision_tree import decision_tree
+from classifiers.knn import k_nn
 
-
-sys.path.insert(0, 'classifiers')
 
 mydata = None
 feature_list = None
@@ -88,6 +91,7 @@ def classify():
     features = request.form.getlist('indep_var')
     train_test_split = request.form.get('train_test_split')
     tune_hyperparameters = request.form.get('tune_hyperparameters')
+    tune_hyperparameters = "0" if tune_hyperparameters is None else tune_hyperparameters
     test_data_percentage = round((1.0 - int(train_test_split) / 100), 3)
 
     print('classify::splitting data into train_test...')
@@ -98,7 +102,8 @@ def classify():
                                          "train_test_data[1],"
                                          "train_test_data[2],"
                                          "train_test_data[3],"
-                                         "train_test_data[4],)")
+                                         "train_test_data[4]" +
+                             ((',' + tune_hyperparameters) if algorithm == 'random_forest' else '') + ")")
 
     accuracy_stats = classifier_output[0].round(3).to_html()
     print(accuracy_stats)
@@ -116,6 +121,7 @@ def classify():
 
     return render_template("classify.html",
                            active_features=feature_list, algorithm=algorithm,
+                           target_variable=target_variable, features=features,
                            accuracy_stats=accuracy_stats, confusion_matrix=confusion_matrix,
                            train_time=train_time, predict_time=predict_time)
 
@@ -147,9 +153,19 @@ def compare_models():
                                                          is_neural_network=is_neural_network)
         model_compare_html = model_compare_df.to_html(classes='table table-striped', index=False)
 
+        fig, ax = plt.subplots()
+        accuracy_variable = sortedgroupedbar(ax, x='target_variable', y='accuracy', groupby='class_algo',
+                                             data=model_compare_df, is_data_grouped=1, xlabelrotation=90)
+
+        fig, ax = plt.subplots()
+        traintime_variable = sortedgroupedbar(ax, x='target_variable', y='train_time_s', groupby='class_algo',
+                                              data=model_compare_df, is_data_grouped=1, xlabelrotation=90)
+
         return render_template("compare_models.html",
                                active_features=feature_list,
-                               model_compare_html=model_compare_html)
+                               model_compare_html=model_compare_html,
+                               accuracy_variable=accuracy_variable,
+                               traintime_variable=traintime_variable)
 
 
 if __name__ == '__main__':

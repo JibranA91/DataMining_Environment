@@ -14,17 +14,62 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
     img = BytesIO()
     sb.set_style("dark")
 
-    # Model Prep
-    clf = RandomForestClassifier(n_estimators=250, criterion="entropy", oob_score=True, warm_start=True)
+    if tune_hyperparameters == 1:
+        from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
+        # Number of trees in random forest
+        n_estimators = [int(x) for x in np.linspace(start=200, stop=2000, num=10)]
+        # Number of features to consider at every split
+        max_features = ['auto', 'sqrt']
+        # Maximum number of levels in tree
+        max_depth = [int(x) for x in np.linspace(10, 110, num=11)]
+        max_depth.append(None)
+        # Minimum number of samples required to split a node
+        min_samples_split = [2, 5, 10]
+        # Minimum number of samples required at each leaf node
+        min_samples_leaf = [1, 2, 4]
+        # Method of selecting samples for training each tree
+        bootstrap = [True, False]
+        random_grid = {'n_estimators': n_estimators,
+                       'max_features': max_features,
+                       'max_depth': max_depth,
+                       'min_samples_split': min_samples_split,
+                       'min_samples_leaf': min_samples_leaf,
+                       'bootstrap': bootstrap}
+        print(random_grid)
 
-    # Train the model using the training sets
-    start_time = time.time()
-    clf.fit(x_train, y_train)
-    train_time = time.time() - start_time
+        clf = RandomForestClassifier()
+        rf_random = RandomizedSearchCV(estimator=clf,
+                                       param_distributions=random_grid,
+                                       n_iter=50,
+                                       cv=2,
+                                       verbose=2,
+                                       n_jobs=-1)
+        # Hyperparameter Tuning
+        start_time = time.time()
+        rf_random.fit(x_train, y_train)
+        hyperparam_tuning_time = time.time() - start_time
 
-    start_time = time.time()
-    y_pred = clf.predict(x_test)
-    predict_time = time.time() - start_time
+        # Predicting
+        best_random = rf_random.best_estimator_
+        start_time = time.time()
+        y_pred = best_random.predict(x_test)
+        predict_time = time.time() - start_time
+
+        best_parameters = rf_random.best_params_
+        print(best_parameters)
+
+    else:
+        # Model Prep
+        clf = RandomForestClassifier(n_estimators=250, criterion="entropy", oob_score=True, warm_start=True)
+
+        # Train the model using the training sets
+        start_time = time.time()
+        clf.fit(x_train, y_train)
+        train_time = time.time() - start_time
+
+        start_time = time.time()
+        y_pred = clf.predict(x_test)
+        predict_time = time.time() - start_time
 
     # Model Prediction Statistics
 
@@ -43,7 +88,7 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
             'y_Predicted': predicted_values
             }
 
-    df = pd.DataFrame(data, columns=['y_Actual','y_Predicted'])
+    df = pd.DataFrame(data, columns=['y_Actual', 'y_Predicted'])
     confusion_matrix = pd.crosstab(df['y_Actual'], df['y_Predicted'], rownames=['Actual'], colnames=['Predicted'])
 
     sb.heatmap(confusion_matrix, annot=True, cmap='viridis', fmt='g')

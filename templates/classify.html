@@ -37,10 +37,15 @@
 
     <div class="datamine_input" style="float:left; padding: 50px;">
         <h1>Data Classification</h1>
-        <h2>Single Classification Algorithm</h2>
-        <p>Below you can select which classification algorithm you want to apply.<br \>
-        Random Forest and Neural Network take some time to run<br \>
-        so please be patient.</p>
+        <p>Below you can select which classification algorithm you want to apply<br \><br \>
+        Average time taken by algorithms on MSD:<br \>
+            <b>Decision Tree:</b> 3 seconds<br \>
+            <b>Random Forest:</b> 270 seconds<br \>
+            <b>Naive Bayes:</b> 1 second<br \>
+            <b>Neural Network:</b> 250 seconds<br \>
+            <b>Support Vector Machine:</b> <i> > 2 hours </i> <br \>
+            <b>K-Nearest Neighbor:</b> <i> > 2 hours </i><br \>
+            <br />
         <form  action="/feature_select/datamine/classify" name="datamine_algo" id="train-model" method="POST">
 
 
@@ -58,7 +63,9 @@
             <div class="field">
                 <p><label class="checkbox" id="tune_hyperparameters" style="display: none;">
                     <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
+                    <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
                 </label></p>
+
             </div><br />
 
 

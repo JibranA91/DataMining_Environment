@@ -3,10 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
-    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slider.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+    <style>
+            table {
+                font-size: 11pt;
+                border-collapse: collapse;
+                border: 0px;   }
+
+            td, th {
+                padding: 5px;
+                text-align: center;  }
+
+            tr:hover {
+                background: silver;
+                cursor: pointer;    }
+    </style>
+    <title>Model Comparison</title>
 </head>
 <body>
-    <div class="model_compare" style="float:left; padding: 50px;">
+    <div class="model_compare" style="float:left; padding: 5px;">
         <h2>Model Comparisons</h2>
         <p>Below you can select which classification algorithms you want to compare<br \>
         Random Forest and Neural Network take some time to run<br \>
@@ -14,16 +30,16 @@
         <form  action="/feature_select/datamine/compare_models" name="model_compare" method="POST">
             <p>
                 <table class="table is-striped is-fullwidth">
-                    <tr><td><label class="checkbox">
+                    <tr><td style="text-align: left; padding: 1px;"><label class="checkbox">
                           <input type="checkbox" name="is_decision_tree" value="1"/> Decision Tree
                     </label></td></tr>
-                    <tr><td><label class="checkbox">
+                    <tr><td style="text-align: left; padding: 1px;"><label class="checkbox">
                           <input type="checkbox" name="is_random_forest" value="1"/> Random Forest
                     </label></td></tr>
-                    <tr><td><label class="checkbox">
+                    <tr><td style="text-align: left; padding: 1px;"><label class="checkbox">
                           <input type="checkbox" name="is_neural_network" value="1"/> Neural Network
                     </label></td></tr>
-                    <tr><td><label class="checkbox">
+                    <tr><td style="text-align: left; padding: 1px;"><label class="checkbox">
                           <input type="checkbox" name="is_naive_bayes" value="1"/> Naive Bayes
                     </label></td></tr>
                 </table>
@@ -51,7 +67,7 @@
                 <table class="table is-striped is-fullwidth">
                 {% for feature in active_features %}
                     <tr>
-                      <td>
+                      <td style="text-align: left; padding: 1px;">
                         <label class="checkbox">
                           <input type="checkbox" name="indep_var" value="{{ feature }}"/> {{ feature }}
                         </label>
@@ -75,8 +91,20 @@
     <div class="model_compare_output" style="float:right; padding: 5px;">
         {% if model_compare_html != 'None' %}
             <h1>Model Performance Comparison</h1>
+            <h3>Accuracy vs Target Variables</h3>
+            <div class="rectangle">
+                <p><img src="data:image/png;base64, {{ accuracy_variable }}"></p>
+            </div>
+            <h3>Training Time vs Classifiers</h3>
+            <div class="rectangle">
+                <p><img src="data:image/png;base64, {{ traintime_variable }}"></p>
+            </div>
             <p>{{ model_compare_html|safe }}</p>
         {% endif %}
+
+
+
+
     </div>
 
 </body>

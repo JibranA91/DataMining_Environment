@@ -1,6 +1,6 @@
 # Plotting Graphs
 
-def sortedgroupedbar(ax, x, y, groupby, data=None, width=0.8, **kwargs):
+def sortedgroupedbar(ax, x, y, groupby, data=None, is_data_grouped=0, xlabelrotation=45, width=0.8, **kwargs):
     from io import BytesIO
     import base64
     import matplotlib.pyplot as plt
@@ -17,13 +17,14 @@ def sortedgroupedbar(ax, x, y, groupby, data=None, width=0.8, **kwargs):
         ax.bar(data[x], data[y])
         ax.set_xlabel(x)
         ax.set_ylabel(y)
-        ax.tick_params(axis='x', labelrotation=45)
+        ax.tick_params(axis='x', labelrotation=xlabelrotation)
     else:
 
-        data = data[[x, groupby]]
-        data_count = data.count()[1]
-        data = data.groupby([x, groupby])[x].agg('count').to_frame('count').reset_index()
-        data['percentage'] = round((data['count'] / data_count) * 100.0, 2)
+        if is_data_grouped == 0:
+            data = data[[x, groupby]]
+            data_count = data.count()[1]
+            data = data.groupby([x, groupby])[x].agg('count').to_frame('count').reset_index()
+            data['percentage'] = round((data['count'] / data_count) * 100.0, 2)
 
         order = np.zeros(len(data))
         df = data.copy()
@@ -44,7 +45,7 @@ def sortedgroupedbar(ax, x, y, groupby, data=None, width=0.8, **kwargs):
         ax.set_xticklabels(u)
         ax.set_xlabel(x)
         ax.set_ylabel(y)
-        ax.tick_params(axis='x', labelrotation=45)
+        ax.tick_params(axis='x', labelrotation=xlabelrotation)
 
     plt.savefig(img, format='png', bbox_inches='tight')
     plt.close()

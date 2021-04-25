@@ -23,7 +23,7 @@
 
     <div class="data_summary" style="float:left; padding: 50px;">
         <h1>Data Summary</h1>
-        <p>Below are some summary stats from the features you selected from your data</p><br /><br />
+        <p>Below you can generate some summary stats from your selected data</p><br />
 
 
 
@@ -68,8 +68,8 @@
                     <img src="data:image/png;base64, {{ rel_chart }}">
                 </div>
             {% else %}
-                <p>There were too many unique values in either the x-axis or the split-on value.</p>
-                <p>Please choose different values.</p>
+                <p style="color:red">There were too many unique values in either the x-axis or the split-on value.<br />
+                Please choose different values.</p>
             {% endif %}
         {% endif %}
 
@@ -85,9 +85,15 @@
 
     <div class="datamine_input" style="float:right; padding: 50px;">
         <h1>Data Classification</h1>
-        <p>Below you can select which classification algorithm you want to apply<br \>
-        Random Forest and Neural Network take some time to run<br \>
-        so please be patient.</p><br /><br /><br />
+        <p>Below you can select which classification algorithm you want to apply<br \><br \>
+        Average time taken by algorithms on MSD:<br \>
+            <b>Decision Tree:</b> 3 seconds<br \>
+            <b>Random Forest:</b> 270 seconds<br \>
+            <b>Naive Bayes:</b> 1 second<br \>
+            <b>Neural Network:</b> 250 seconds<br \>
+            <b>Support Vector Machine:</b> <i> > 2 hours </i> <br \>
+            <b>K-Nearest Neighbor:</b> <i> > 2 hours </i><br \>
+            <br />
         <form  action="/feature_select/datamine/classify" name="datamine_algo" id="train-model" method="POST">
 
             <p>
