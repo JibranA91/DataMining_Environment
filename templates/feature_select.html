@@ -3,15 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
-    <title>Features</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+    <title>Column Selection</title>
+    <style>
+            table {
+                font-size: 11pt;
+                border-collapse: collapse;
+                border: 0px;   }
+
+            td, th {
+                padding: 5px;
+                text-align: center;  }
+
+            tr:hover {
+                background: silver;
+                cursor: pointer;    }
+    </style>
 </head>
 <body>
 
-<div class="feature_select">
-    <h1> Data Features</h1>
+<div  style="float:right; padding: 5px;">
+    <h1>Data Summary</h1>
+    <p>{{ data_info|safe }}</p>
+</div>
 
-    <p> Select all the features you want to include:</p>
-    <p> <i> Do remember <b>not</b> to include any primary_key attributes </i></p>
+<div class="feature_select" style="float:left; padding: 5px;">
+    <h1> Data Features</h1>
+    <p> Sometimes our data has too many columns. More than we need to test a model. </p>
+    <p> In such scenarios, it's better to exclude some columns entirely.<br />On the right there is a summary
+    of the data file you added.</p>
+    <p> Select all the columns you want to use from the input data <br />and the rest will not be considered from here on: </p>
 
     <table class="feature_select">
 
@@ -26,21 +47,20 @@
                 }
             </script>
 
-          <table class="table is-striped is-fullwidth" >
+
+            <table class="table is-striped is-fullwidth" >
+                <tr><td style="text-align: left; padding: 1px;"><label class="checkbox"><input type="checkbox" onClick="toggle(this)" /> <i>Select All</i> <br/><br/></label></td></tr>
             {% for column_name in column_names %}
-              {% if column_name != 'track_id' %}
                 <tr>
-                  <td>
+                  <td style="text-align: left; padding: 1px;">
                     <label class="checkbox">
                       <input type="checkbox" name="column_name" value="{{ column_name }}"/> {{ column_name }}
                     </label>
                   </td>
                 </tr>
-              {% endif %}
             {% endfor %}
               <tr><td></td></tr>
-              <tr><td><label class="checkbox"><input type="checkbox" onClick="toggle(this)" /> <i>Select All</i> <br/><br/></label></td></tr>
-          </table>
+            </table>
 
           <div class="field is-grouped">
             <div class="control">

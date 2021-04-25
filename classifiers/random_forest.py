@@ -1,6 +1,6 @@
 #Random Forest
 
-def random_forest(x_train, x_test, y_train, y_test, label_encoder):
+def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperparameters=0):
     import time
     import pandas as pd
     from sklearn.ensemble import RandomForestClassifier

@@ -3,20 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
-    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+
+    <style>
+            table {
+                font-size: 11pt;
+                border-collapse: collapse;
+                border: 0px;   }
+
+            td, th {
+                padding: 5px;
+                text-align: center;  }
+
+            tr:hover {
+                background: silver;
+                cursor: pointer;    }
+    </style>
+    <script type="text/javascript">
+        function ShowHideDiv() {
+            var dropdown = document.getElementById("datamine_algo");
+            var details_div = document.getElementById("tune_hyperparameters");
+            if(dropdown.value == "random_forest") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
+        };
+    </script>
+
+    <title>Classify</title>
 </head>
 <body>
 
     <div class="datamine_input" style="float:left; padding: 50px;">
         <h1>Data Classification</h1>
         <h2>Single Classification Algorithm</h2>
-        <p>Below you can select which classification algorithm you want to apply<br \>
+        <p>Below you can select which classification algorithm you want to apply.<br \>
         Random Forest and Neural Network take some time to run<br \>
         so please be patient.</p>
-        <form  action="/feature_select/datamine/classify" name="datamine_algo" method="POST">
+        <form  action="/feature_select/datamine/classify" name="datamine_algo" id="train-model" method="POST">
+
+
             <p>
                 <label for="datamine_algo">Classification Algorithm:</label>
-                <select name="datamine_algo" id="datamine_algo">
+                <select name="datamine_algo" id="datamine_algo" editable="true" onchange = "ShowHideDiv()">
                     <option value="decision_tree">Decision Tree</option>
                     <option value="naive_bayes">Naive Bayes</option>
                     <option value="random_forest">Random Forest</option>
@@ -25,6 +55,13 @@
                     <option value="support_vm">Support Vector Machine</option>
                 </select>
             </p>
+            <div class="field">
+                <p><label class="checkbox" id="tune_hyperparameters" style="display: none;">
+                    <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
+                </label></p>
+            </div><br />
+
+
             <p>
                 <div class="slidecontainer">
                     <p>Train-Test Split:
@@ -56,7 +93,7 @@
                 <table class="table is-striped is-fullwidth">
                 {% for feature in active_features %}
                     <tr>
-                      <td>
+                      <td style="text-align: left; padding: 1px;">
                         <label class="checkbox">
                           <input type="checkbox" name="indep_var" value="{{ feature }}"/> {{ feature }}
                         </label>
@@ -69,12 +106,13 @@
 
             <div class="field is-grouped">
                 <div class="control">
-                  <p><input type="submit"></p>
+                  <p><p><button type="submit" form="train-model" value="Submit" >Train Model</button></p></p>
                 </div>
             </div>
 
         </form>
-        <p><a href="/feature_select/datamine/compare_models">Compare Models Instead</a></p>
+        <p><a href="{{ url_for('compare_models') }}">Compare Models Instead</a></p>
+        <p><a href="{{ url_for('datamine') }}">Go Back</a></p>
     </div>
 
     <div class="datamine_output" style="float:right; padding: 50px;">
