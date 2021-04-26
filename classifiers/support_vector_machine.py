@@ -52,5 +52,6 @@ def support_vm(x_train, x_test, y_train, y_test, label_encoder):
     plt.close()
     img.seek(0)
     cm_plot_url = base64.b64encode(img.getvalue()).decode('utf8')
+    best_parameters = "None"
 
-    return [accuracy_stats, cm_plot_url, [train_time, predict_time]]
+    return [accuracy_stats, cm_plot_url, [train_time, predict_time], best_parameters]

@@ -4,29 +4,101 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slider.css') }}">
-    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+    <script type="text/javascript">
+        function ShowHideDiv() {
+            var dropdown = document.getElementById("datamine_algo");
+            var details_div = document.getElementById("tune_hyperparameters");
+            if(dropdown.value == "random_forest") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
+        };
+    </script>
+    <title>Datamine</title>
+
 </head>
 <body>
 
     <div class="data_summary" style="float:left; padding: 50px;">
         <h1>Data Summary</h1>
-        <p>Below are some summary stats from the features you selected from your data</p><br /><br /><br />
+        <p>Below you can generate some summary stats from your selected data</p><br />
 
+
+
+        <h3>Build Relationship Chart</h3>
+        <form  action="/feature_select/datamine" name="rel-chart" id="rel-chart" method="POST">
+            <p>
+                <label for="rel-chart">X-Axis:</label>
+                <select name="x_axis" id="x_axis">
+                    {% for feature in active_features %}
+                        <option value="{{ feature }}"/> {{ feature }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                <label for="rel-chart">Y-Axis:</label>
+                <select name="y_axis" id="y_axis">
+                    <option value="percentage"/> Percentage</option>
+                    <option value="count"/> Counts</option>
+                </select>
+            </p>
+            <p>
+                <label for="rel-chart">Split-On:</label>
+                <select name="split_on" id="split_on">
+                    <option value="Don't Split"/><b>Don't Split</b></option>
+                    {% for feature in active_features %}
+                        <option value="{{ feature }}"/> {{ feature }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <div class="field is-grouped">
+                <div class="control">
+                  <p><button type="submit" form="rel-chart" value="Submit" >Show Chart</button></p>
+                </div>
+            </div>
+        </form>
+
+        {% if rel_chart != 0 %}
+            <br />
+            <h3>Relationship Chart</h3>
+            {% if rel_chart != 'Too Many Unique Values In X-Axis or Split-On Value' %}
+                <div class=square">
+                    <img src="data:image/png;base64, {{ rel_chart }}">
+                </div>
+            {% else %}
+                <p style="color:red">There were too many unique values in either the x-axis or the split-on value.<br />
+                Please choose different values.</p>
+            {% endif %}
+        {% endif %}
+
+        <br />
         <h3>Confusion Matrix</h3>
         <div class=square">
             <img src="data:image/png;base64, {{ c_matrix }}">
         </div>
     </div>
 
+
+
+
     <div class="datamine_input" style="float:right; padding: 50px;">
         <h1>Data Classification</h1>
-        <p>Below you can select which classification algorithm you want to apply<br \>
-        Random Forest and Neural Network take some time to run<br \>
-        so please be patient.</p><br /><br /><br />
-        <form  action="/feature_select/datamine/classify" name="datamine_algo" method="POST">
+        <p>Below you can select which classification algorithm you want to apply<br \><br \>
+        Average time taken by algorithms on MSD:<br \>
+            <b>Decision Tree:</b> 3 seconds<br \>
+            <b>Random Forest:</b> 270 seconds<br \>
+            <b>Naive Bayes:</b> 1 second<br \>
+            <b>Neural Network:</b> 250 seconds<br \>
+            <b>Support Vector Machine:</b> <i> > 2 hours </i> <br \>
+            <b>K-Nearest Neighbor:</b> <i> > 2 hours </i><br \>
+            <br />
+        <form  action="/feature_select/datamine/classify" name="datamine_algo" id="train-model" method="POST">
+
             <p>
                 <label for="datamine_algo">Classification Algorithm:</label>
-                <select name="datamine_algo" id="datamine_algo">
+                <select name="datamine_algo" id="datamine_algo" editable="true" onchange = "ShowHideDiv()">
                     <option value="decision_tree">Decision Tree</option>
                     <option value="naive_bayes">Naive Bayes</option>
                     <option value="random_forest">Random Forest</option>
@@ -35,6 +107,10 @@
                     <option value="support_vm">Support Vector Machine</option>
                 </select>
             </p>
+
+
+
+
             <p>
                 <div class="slidecontainer">
                     <p>Train-Test Split:
@@ -79,7 +155,7 @@
 
             <div class="field is-grouped">
                 <div class="control">
-                  <p><input type="submit"></p>
+                  <p><button type="submit" form="train-model" value="Submit" >Train Model</button></p>
                 </div>
             </div>
 
