@@ -34,9 +34,10 @@ def feature_select():
     mydata = pull_data(uploaded_file.filename)
     column_names = list(mydata.columns)
 
+    data_rows = len(mydata)
     data_info = data_summary(mydata).to_html(index=False)
 
-    return render_template("feature_select.html", column_names=column_names, data_info=data_info)
+    return render_template("feature_select.html", column_names=column_names, data_info=data_info, data_rows=data_rows)
 
 
 @app.route('/feature_select/datamine', methods=['GET', 'POST'])
@@ -58,7 +59,10 @@ def datamine():
 
         if feature_list is None or active_data is None:
             feature_list = request.form.getlist('column_name')
-            active_data = mydata[feature_list]
+            sample_rows = request.form.get('sample_rows')
+            active_data = mydata[feature_list].sample(n=int(sample_rows))
+            print("datamine::"+str(len(active_data)) + " rows being used in the data")
+
             if feature_list is None or active_data is None:
                 return "<h1> Method Not Allowed </h1>"
 
@@ -93,6 +97,10 @@ def classify():
     tune_hyperparameters = request.form.get('tune_hyperparameters')
     tune_hyperparameters = "0" if tune_hyperparameters is None else tune_hyperparameters
     test_data_percentage = round((1.0 - int(train_test_split) / 100), 3)
+    if algorithm == 'k_nn':
+        n = request.form.get('k_centroids')
+    else:
+        n = "Not k_nn"
 
     print('classify::splitting data into train_test...')
     train_test_data = data_prep(active_data, features, target_variable, test_data_percentage)
@@ -103,13 +111,14 @@ def classify():
                                          "train_test_data[2],"
                                          "train_test_data[3],"
                                          "train_test_data[4]" +
-                             ((',' + tune_hyperparameters) if algorithm == 'random_forest' else '') + ")")
+                             ((',' + tune_hyperparameters) if algorithm == 'random_forest' else '') +
+                             ((',' + n) if algorithm == 'k_nn' else '') + ")")
 
     accuracy_stats = classifier_output[0].round(3).to_html()
-    confusion_matrix = classifier_output[1]  # confusion matrix
+    confusion_matrix = classifier_output[1]
     train_time = str(round((classifier_output[2][0]), 3))
     predict_time = str(round((classifier_output[2][1]), 3))
-    best_parameters = str(classifier_output[3])
+    best_parameters = str(classifier_output[3])  # can either hold "None", RFs best parameters, or k_nn's plot
     best_parameters = best_parameters.replace(",", ",<br />", 15)
     print(best_parameters)
 
@@ -118,7 +127,7 @@ def classify():
         replace('naive_bayes', 'Naive Bayes'). \
         replace('random_forest', 'Random Forest'). \
         replace('neural_network', 'Neural Network').\
-        replace('k_nn', 'K Nearest N').\
+        replace('k_nn', 'K-Nearest Neighbor').\
         replace('support_vm', 'Support Vector M')
 
     return render_template("classify.html",
@@ -126,7 +135,7 @@ def classify():
                            target_variable=target_variable, features=features,
                            accuracy_stats=accuracy_stats, confusion_matrix=confusion_matrix,
                            train_time=train_time, predict_time=predict_time,
-                           best_parameters=best_parameters)
+                           best_parameters=best_parameters, n=n)
 
 
 @app.route('/feature_select/datamine/compare_models', methods=['GET', 'POST'])

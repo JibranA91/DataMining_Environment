@@ -28,6 +28,13 @@
             } else {
             details_div.style['display'] = 'none';
             }
+
+            var details_div = document.getElementById("k_centroids");
+            if(dropdown.value == "k_nn") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
         };
     </script>
 
@@ -65,7 +72,12 @@
                     <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
                 </label></p>
                 <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
-            </div><br />
+            </div>
+            <div class="field"  id="k_centroids" style="display: none;">
+                <p><label>
+                    <input type="number" name="k_centroids" min="3" max="15"> K-Centroids
+                </label></p>
+            </div>
 
 
             <p>
@@ -122,12 +134,23 @@
     </div>
 
     <div class="datamine_output" style="float:right; padding: 50px;">
-        <h1>{{ algorithm }} Output</h1><br /><br />
+        <h1>{{ algorithm }} Output</h1><br />
+        {% if algorithm == "K-Nearest Neighbor" %}
+                <div class=square">
+                    <h2>Accuracy Chart For Range of N_Neighbors</h2>
+                    <img src="data:image/png;base64, {{ best_parameters }}">
+                </div>
+        {% endif %}
+        {% if algorithm == "K-Nearest Neighbor" %}
+            <h2>For N_Neighbors = {{ n }}</h2>
+        {% endif %}
         <p> Training Time: {{ train_time }} seconds <br />
         Prediction Time: {{ predict_time }} seconds </p>
         {% if best_parameters != "None" %}
-            <h3>Best Parameters from Hypertuning</h3>
-            <p> {{ best_parameters|safe }} </p>
+            {% if algorithm == "Random Forest" %}
+                <h3>Best Parameters from Hypertuning</h3>
+                <p> {{ best_parameters|safe }} </p>
+            {% endif %}
         {% endif %}
         <h3>Accuracy Stats</h3>
         <p>{{ accuracy_stats|safe }}</p>
@@ -135,9 +158,6 @@
         <div class=square">
             <img src="data:image/png;base64, {{ confusion_matrix }}">
         </div>
-
-
-
     </div>
 
 

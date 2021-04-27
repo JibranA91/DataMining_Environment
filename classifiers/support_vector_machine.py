@@ -15,7 +15,7 @@ def support_vm(x_train, x_test, y_train, y_test, label_encoder):
     img = BytesIO()
     sb.set_style("dark")
 
-    clf = svm.SVC(kernel='linear')  # Linear Kernel
+    clf = svm.SVC(kernel='linear', C=5.0)  # Linear Kernel
 
     # Train the model using the training sets
     start_time = time.time()

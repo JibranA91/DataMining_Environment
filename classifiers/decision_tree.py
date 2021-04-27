@@ -12,6 +12,7 @@ def decision_tree(x_train, x_test, y_train, y_test, label_encoder):
     import base64
     import matplotlib.pyplot as plt
 
+    print("decision_tree:: Executing Decision Tree")
     img = BytesIO()
     sb.set_style("dark")
 
