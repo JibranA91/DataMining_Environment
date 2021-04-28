@@ -96,4 +96,5 @@ def all_feature_models_validation(model_data, all_features_list, test_data_perce
             print('all_feature_models_validation::model accuracy: ' + str(
                 model_accuracy) + ' with target variable: ' + fmv_target_variable)
 
+        model_compare_df[["accuracy", "train_data_count", "valid_data_count"]] = model_compare_df[["accuracy", "train_data_count", "valid_data_count"]].apply(pd.to_numeric)
     return model_compare_df

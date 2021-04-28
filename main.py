@@ -163,10 +163,12 @@ def compare_models():
                                                          is_random_forest=is_random_forest,
                                                          is_naive_bayes=is_naive_bayes,
                                                          is_neural_network=is_neural_network)
+
+        print(model_compare_df.info())
         model_compare_html = model_compare_df.to_html(classes='table table-striped', index=False)
 
-        fig, ax = plt.subplots()
-        accuracy_variable = sortedgroupedbar(ax, x='target_variable', y='accuracy', groupby='class_algo',
+        fig, ay = plt.subplots()
+        accuracy_variable = sortedgroupedbar(ay, x='target_variable', y='accuracy', groupby='class_algo',
                                              data=model_compare_df, is_data_grouped=1, xlabelrotation=90)
 
         fig, ax = plt.subplots()
@@ -181,4 +183,4 @@ def compare_models():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
