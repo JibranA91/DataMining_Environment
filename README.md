@@ -12,12 +12,12 @@ This short video explains how to run the UI:
 https://youtu.be/ePjJpjQhGIk
 
 ### Required Libraries
-pip3 install flask
-pip3 install matplotlib
-pip3 install pandas
-pip3 install sklearn
-pip3 install seaborn
-pip3 install numpy
+pip3 install flask   
+pip3 install matplotlib  
+pip3 install pandas  
+pip3 install sklearn  
+pip3 install seaborn  
+pip3 install numpy  
 
 
 Executing the main.py file will launch a localhost server that you can navigate to from your browser.
