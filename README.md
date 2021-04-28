@@ -18,10 +18,10 @@ pip3 install pandas
 pip3 install sklearn  
 pip3 install seaborn  
 pip3 install numpy  
+* this code has been built and tested on Python 3.8
 
 
 Executing the main.py file will launch a localhost server that you can navigate to from your browser.
-
 
 
 #### Data Credits:
@@ -31,4 +31,4 @@ for Music Information Retrieval Conference (ISMIR 2011), 2011.* [[link](http://w
 
 
 
-*please note that this app is still in dev so you may encounter some bugs if you go looking for them*
+**please note that this app is still in dev so you may encounter some bugs if you go looking for them*
