@@ -6,7 +6,10 @@ Data Mining the structured Million Song Database to find interesting patterns an
 2. Download the million song database .csv file from [here](https://1drv.ms/u/s!AiDMfUR-ihQ-jLNTWnnC0MjwmbEn9w?e=jRZXeP)
 3. If you want to run the UI, switch to **flask_ui** branch
 4. Execute the *main.py* file
-5. It will start a server a provide you the link
+5. It will start a server and provide you the link
+
+This short video explains how to run the UI:
+https://youtu.be/ePjJpjQhGIk
 
 
 *please note that this app is still in dev so you may encounter some bugs*
