@@ -11,17 +11,24 @@ Data Mining the structured Million Song Database to find interesting patterns an
 This short video explains how to run the UI:
 https://youtu.be/ePjJpjQhGIk
 
+### Required Libraries
+pip3 install flask
+pip3 install matplotlib
+pip3 install pandas
+pip3 install sklearn
+pip3 install seaborn
+pip3 install numpy
 
-*please note that this app is still in dev so you may encounter some bugs*
 
 Executing the main.py file will launch a localhost server that you can navigate to from your browser.
 
-
-_All packages are already installed in the repo. 
-You shouldn't need to install any._
 
 
 #### Data Credits:
 *Thierry Bertin-Mahieux, Daniel P.W. Ellis, Brian Whitman, and Paul Lamere. 
 The Million Song Dataset. In Proceedings of the 12th International Society
 for Music Information Retrieval Conference (ISMIR 2011), 2011.* [[link](http://www.columbia.edu/~tb2332/Papers/ismir11.pdf)]
+
+
+
+*please note that this app is still in dev so you may encounter some bugs if you go looking for them*
