@@ -18,10 +18,8 @@ pip3 install pandas
 pip3 install sklearn  
 pip3 install seaborn  
 pip3 install numpy  
-* this code has been built and tested on Python 3.8
+*this code has been built and tested on Python 3.8*
 
-
-Executing the main.py file will launch a localhost server that you can navigate to from your browser.
 
 
 #### Data Credits:
