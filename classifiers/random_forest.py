@@ -10,6 +10,7 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
     import base64
     import matplotlib.pyplot as plt
 
+    print("random_forest:: Executing Random Forest")
     img = BytesIO()
     sb.set_style("dark")
     best_parameters = "None"
@@ -37,13 +38,13 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
                        'min_samples_split': min_samples_split,
                        'min_samples_leaf': min_samples_leaf,
                        'bootstrap': bootstrap}
-        print(random_grid)
+        print("random_forest:: "+str(random_grid))
 
         clf = RandomForestClassifier()
         rf_random = RandomizedSearchCV(estimator=clf,
                                        param_distributions=random_grid,
-                                       n_iter=1,
-                                       cv=2,  # 2
+                                       n_iter=50,
+                                       cv=2,
                                        verbose=2,
                                        n_jobs=-1)
         # Hyperparameter Tuning
@@ -58,7 +59,7 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
         predict_time = time.time() - start_time
 
         best_parameters = rf_random.best_params_
-        print(best_parameters)
+        print("random_forest:: "+str(best_parameters))
 
     else:
         # Model Prep
@@ -83,6 +84,7 @@ def random_forest(x_train, x_test, y_train, y_test, label_encoder, tune_hyperpar
                                                    label_encoder.inverse_transform(y_pred),
                                                    output_dict=True)
     accuracy_stats = pd.DataFrame(accuracy_stats).transpose()
+    print("random_forest::")
     print(accuracy_stats)
 
     # Confusion Matrix

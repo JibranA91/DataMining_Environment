@@ -14,6 +14,7 @@ def neural_network(x_train, x_test, y_train, y_test, label_encoder):
     import base64
     import matplotlib.pyplot as plt
 
+    print("neural_network:: Executing Neural Network")
     img = BytesIO()
     sb.set_style("dark")
 

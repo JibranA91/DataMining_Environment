@@ -14,6 +14,13 @@
             } else {
             details_div.style['display'] = 'none';
             }
+
+            var details_div = document.getElementById("k_centroids");
+            if(dropdown.value == "k_nn") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
         };
     </script>
     <title>Datamine</title>
@@ -74,7 +81,7 @@
         {% endif %}
 
         <br />
-        <h3>Confusion Matrix</h3>
+        <h3>Correlation Matrix</h3>
         <div class=square">
             <img src="data:image/png;base64, {{ c_matrix }}">
         </div>
@@ -107,10 +114,17 @@
                     <option value="support_vm">Support Vector Machine</option>
                 </select>
             </p>
-
-
-
-
+            <div class="field"  id="tune_hyperparameters" style="display: none;">
+                <p><label class="checkbox">
+                    <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
+                </label></p>
+                <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
+            </div>
+            <div class="field"  id="k_centroids" style="display: none;">
+                <p><label>
+                    <input type="number" name="k_centroids" min="3" max="15"> K-Centroids
+                </label></p>
+            </div>
             <p>
                 <div class="slidecontainer">
                     <p>Train-Test Split:
