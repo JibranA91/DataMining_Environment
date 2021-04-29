@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slider.css') }}">
+    <title>Column Selection</title>
+    <style>
+            table {
+                font-size: 11pt;
+                border-collapse: collapse;
+                border: 0px;   }
+
+            td, th {
+                padding: 5px;
+                text-align: center;  }
+            tr:hover {
+                background: silver;    }
+
+    </style>
+</head>
+<body>
+
+    <div  style="float:right; padding: 5px;">
+        <h1>Data Summary</h1>
+        <p>{{ data_info|safe }}</p>
+    </div>
+
+    <div class="feature_select" style="float:left; padding: 10px;">
+        <h1> Data Features</h1>
+        <p> Sometimes our data has too many columns or rows. More than we need to test a model. </p>
+        <p> In such scenarios, it's better to exclude some columns or rows entirely.<br />On the right there is a summary
+        of the data file you added.</p>
+
+        <table class="feature_select">
+
+            <form action="/feature_select/datamine" name="feature_list" method="POST">
+
+                <p>
+                    <div class="slidecontainer">
+                        <p>Sample Rows From Full Data:</p>
+                        <p><input type="range" min="5000" max="{{ data_rows }}" value="{{ data_rows }}" id="sample_rows" name="sample_rows"></p>
+                        Randomly Sample <span id="rows"></span> Rows From Data
+                        <script>
+                            var slider = document.getElementById("sample_rows");
+                            var output = document.getElementById("rows");
+                            output.innerHTML = slider.value;
+                            slider.oninput = function() {
+                              output.innerHTML = this.value;
+                            }
+                        </script>
+                    </div>
+                </p>
+
+
+                <script language="JavaScript">
+                    function toggle(source) {
+                      checkboxes = document.getElementsByName('column_name');
+                      for(var i=0, n=checkboxes.length;i<n;i++) {
+                            checkboxes[i].checked = source.checked;
+                            }
+                    }
+                </script>
+
+                <p> Select all the columns you want to use from the input data <br />and the rest will not be considered from here on: </p>
+                <table class="table is-striped is-fullwidth" >
+                    <tr><td style="text-align: left; padding: 1px;"><label class="checkbox"><input type="checkbox" onClick="toggle(this)" /> <i>Select All</i> <br/><br/></label></td></tr>
+                {% for column_name in column_names %}
+                    <tr>
+                      <td class="no-hover" style="text-align: left; padding: 1px;">
+                        <label class="checkbox">
+                          <input type="checkbox" name="column_name" value="{{ column_name }}"/> {{ column_name }}
+                        </label>
+                      </td>
+                    </tr>
+                {% endfor %}
+                  <tr><td></td></tr>
+                </table>
+
+              <div class="field is-grouped">
+                <div class="control">
+                  <p><input type="submit"></p>
+                </div>
+              </div>
+            </form>
+
+        </table>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='images.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='general.css') }}">
+
+    <style>
+            table {
+                font-size: 11pt;
+                border-collapse: collapse;
+                border: 0px;   }
+
+            td, th {
+                padding: 5px;
+                text-align: center;  }
+
+            tr:hover {
+                background: silver;
+                cursor: pointer;    }
+    </style>
+    <script type="text/javascript">
+        function ShowHideDiv() {
+            var dropdown = document.getElementById("datamine_algo");
+            var details_div = document.getElementById("tune_hyperparameters");
+            if(dropdown.value == "random_forest") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
+
+            var details_div = document.getElementById("k_centroids");
+            if(dropdown.value == "k_nn") {
+            details_div.style['display'] = 'block';
+            } else {
+            details_div.style['display'] = 'none';
+            }
+        };
+    </script>
+
+    <title>Classify</title>
+</head>
+<body>
+
+    <div class="datamine_input" style="float:left; padding: 50px;">
+        <h1>Data Classification</h1>
+        <p>Below you can select which classification algorithm you want to apply<br \><br \>
+        Average time taken by algorithms on MSD:<br \>
+            <b>Decision Tree:</b> 3 seconds<br \>
+            <b>Random Forest:</b> 270 seconds<br \>
+            <b>Naive Bayes:</b> 1 second<br \>
+            <b>Neural Network:</b> 250 seconds<br \>
+            <b>Support Vector Machine:</b> <i> > 2 hours </i> <br \>
+            <b>K-Nearest Neighbor:</b> <i> > 2 hours </i><br \>
+            <br />
+        <form  action="/feature_select/datamine/classify" name="datamine_algo" id="train-model" method="POST">
+
+
+            <p>
+                <label for="datamine_algo">Classification Algorithm:</label>
+                <select name="datamine_algo" id="datamine_algo" editable="true" onchange = "ShowHideDiv()">
+                    <option value="decision_tree">Decision Tree</option>
+                    <option value="naive_bayes">Naive Bayes</option>
+                    <option value="random_forest">Random Forest</option>
+                    <option value="neural_network">Neural Network</option>
+                    <option value="k_nn">K-Nearest N</option>
+                    <option value="support_vm">Support Vector Machine</option>
+                </select>
+            </p>
+            <div class="field"  id="tune_hyperparameters" style="display: none;">
+                <p><label class="checkbox">
+                    <input type="checkbox" name="tune_hyperparameters" value="1"/> Tune Hyperparameters?
+                </label></p>
+                <p><b>Warning:</b> This takes <i>a lot</i> of time</p>
+            </div>
+            <div class="field"  id="k_centroids" style="display: none;">
+                <p><label>
+                    <input type="number" name="k_centroids" min="3" max="15"> K-Centroids
+                </label></p>
+            </div>
+
+
+            <p>
+                <div class="slidecontainer">
+                    <p>Train-Test Split:
+                    <input type="range" min="30" max="90" value="70" id="train_test_split" name="train_test_split">
+                    <span id="demo"></span>% For Training</p>
+
+                    <script>
+                        var slider = document.getElementById("train_test_split");
+                        var output = document.getElementById("demo");
+                        output.innerHTML = slider.value;
+
+                        slider.oninput = function() {
+                          output.innerHTML = this.value;
+                        }
+                    </script>
+
+                </div>
+            </p>
+            <p>
+                <label for="dep_var">Dependent Variable:</label>
+                <select name="dep_var" id="dep_var">
+                    {% for feature in active_features %}
+                        <option name="dep_var" value="{{ feature }}"/> {{ feature }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>Independent Variable(s):</p>
+            <p>
+                <table class="table is-striped is-fullwidth">
+                {% for feature in active_features %}
+                    <tr>
+                      <td style="text-align: left; padding: 1px;">
+                        <label class="checkbox">
+                          <input type="checkbox" name="indep_var" value="{{ feature }}"/> {{ feature }}
+                        </label>
+                      </td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </p>
+
+
+            <div class="field is-grouped">
+                <div class="control">
+                  <p><p><button type="submit" form="train-model" value="Submit" >Train Model</button></p></p>
+                </div>
+            </div>
+
+        </form>
+        <p><a href="{{ url_for('compare_models') }}">Compare Models Instead</a></p>
+        <p><a href="{{ url_for('datamine') }}">Go Back</a></p>
+    </div>
+
+    <div class="datamine_output" style="float:right; padding: 50px;">
+        <h1>{{ algorithm }} Output</h1><br />
+        {% if algorithm == "K-Nearest Neighbor" %}
+                <div class=square">
+                    <h2>Accuracy Chart For Range of N_Neighbors</h2>
+                    <img src="data:image/png;base64, {{ best_parameters }}">
+                </div>
+        {% endif %}
+        {% if algorithm == "K-Nearest Neighbor" %}
+            <h2>For N_Neighbors = {{ n }}</h2>
+        {% endif %}
+        <p> Training Time: {{ train_time }} seconds <br />
+        Prediction Time: {{ predict_time }} seconds </p>
+        {% if best_parameters != "None" %}
+            {% if algorithm == "Random Forest" %}
+                <h3>Best Parameters from Hypertuning</h3>
+                <p> {{ best_parameters|safe }} </p>
+            {% endif %}
+        {% endif %}
+        <h3>Accuracy Stats</h3>
+        <p>{{ accuracy_stats|safe }}</p>
+        <h3>Confusion Matrix</h3>
+        <div class=square">
+            <img src="data:image/png;base64, {{ confusion_matrix }}">
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
